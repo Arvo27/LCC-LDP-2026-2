@@ -1,0 +1,1 @@
+("9.2" tarm64osx ("6d085ccba8a549d51772894c5cde7afda086b47f" . "8cf1a6bf05256633c18d8fce693eed4ad5c48c72") #"/Users/angel/Documents/Prog-Eduardo/git-repo-plantilla/LCC LDP 2026-2/unidad-2/tarea2/proc-varios-azucar/tests/../lexer.rkt" (collects #"racket" #"main.rkt") (collects #"racket" #"runtime-config.rkt") (collects #"rackunit" #"main.rkt"))

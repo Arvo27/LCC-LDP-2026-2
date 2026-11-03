@@ -1,0 +1,1 @@
+("9.2" tarm64osx ("47e6834a8cfeb1dacc2c9fbdc9cedd0cf92e8f13" . "9847e3e3a1b2b6780a7d3f7a01d09a5ee12164b4") (collects #"parser-tools" #"lex-sre.rkt") (collects #"parser-tools" #"lex.rkt") (collects #"racket" #"main.rkt") (collects #"racket" #"runtime-config.rkt") (collects #"syntax" #"readerr.rkt"))

@@ -1,0 +1,123 @@
+BLOQUE 1
+
+1.1 Suma
+
+let suma = proc (x) proc(y) -(x, -(0, y)) in ((suma 3) 4) = 7
+
+1.2 Componer 
+
+let compone = proc (f) proc (g) proc (x) (f (g x))
+
+1.3 Invertir argumentos
+
+let invertir_args = proc (f) proc (a) proc (b) (f (b a))
+// Corrección
+
+let invertir_args = proc (f) proc (a) proc (b) ((f b) a)
+
+BLOQUE 2
+
+2.1 
+
+a) El resultado sera 9, porque y agarra 10 por es llamado en el entorno de la funcion y x es igual a 1
+porque lo agarra la clausura
+
+b) 99 - 40 = 59
+
+en (quita1 100) quita1 es llamado y el argumento que se le da como menos es 100, entonces n = 1 y 100 = x
+dando 99, e igual con el (quita10 50)
+
+c) Valdria 6, en la clausura se encuentra dos veces y hace llamada a resta1 y le resta 1 4 veces a 10
+
+d) da 7, porque proc (y) guarda 10 y x vale 3 por el alcance lexico
+
+2.2
+
+a) -(x, y) Son libres
+b) proc (x) -(x, y) x esta vinculada y y es libres
+c) let y = 3 in proc (x) -(x, y) y esta vinculada al let y x vinculada al proc
+d) let x = x in -(x, 1) la x del let esta vinculada pero la x de in es libre 
+e) proc (f) (f (g x)) f esta vinculada y g, x es libre
+f) let z = 5 in proc (x) let y = -(x, z) in -(y, w) z esta vinculada al let, x vinculada al proc, y vinculada 
+
+
+BLOQUE 3
+
+Instrucción: predice con [letproc] qué pasa con letproc f (x) = (f x) in (f 1), y des-
+pués córrelo. ¿Puede el cuerpo de un letproc llamar al procedimiento que se está definiendo?
+
+No puede, porque f no esta definida, el error pasa cuanod el cuerpo
+del proc intenta buscar f. la f de afuera, la de (f 1), si esta vinculada.
+
+
+
+BLOQUE 4
+
+let x = e1 in e2   ⇝   (proc (x) e2 e1)      [let]
+
+Escribe el arbol:
+
+(proc-exp (proc-exp x e2) e1)
+
+---
+
+Porque 12 pruebas fallan? 9 son del interp, esas pruebas construyen
+un let-exp a mano y se lo dan directamente a value-of, sin pasar por desugar. Como
+borre la clausula de let-exp del interprete, el match de value-of no tiene que hacer
+con es enodo.
+
+2 son de desugar
+Falla porque el programa core-program empieza con let x = 7 in ... cuando se escribio la prueba
+let era el nucleo, ahora es azucar y desugar lo convierte en una llamada 
+
+1 es de letproc
+
+El lado izquierdo de la prueba pasa por desugar, que por ahora traduce
+dos pasos: letproc -> let -> llamada. El lado derecho es solo
+(parse "let f = proc (x) x in f"), aqui parse no traduce nada, asi que se queda como let 
+---
+
+Instrucción: ¿en cuántos pasos de desugar se traduce letproc f (x) = x in (f 1),
+y qué árbol queda al final? ¿Tuviste que cambiar la cláusula de letproc?
+
+En dos pasos:
+1. [letproc]: letproc f (x) = x in (f 1)  ->  let f = proc (x) x in (f 1)
+2. [let]:     let f = proc (x) x in (f 1) ->  (proc (f) (f 1) proc (x) x)
+
+Arbol final:
+(call-exp (proc-exp 'f (call-exp (var-exp 'f) (const-exp 1)))
+          (proc-exp 'x (var-exp 'x)))
+
+No cambie la clausula de letproc. Ella produce un let-exp y lo vuelve a pasar
+por desugar, y ahora desugar traduce ese let a una llamada. Lo que sí cambio
+fue su prueba de desugar, porque ya no sale un let al final.
+
+
+
+BLOQUE 5
+Al correr make test fallo una sola prueba.
+
+Cual es? la de [proc] en interp-tests.rkt, la que comparaba el valor con
+(procval (closure 'y (var-exp 'y) ρx)).
+
+Porque falla aunque ningun programa cambio de valor? porque ahora la clausura
+ya no guarda ρx, guarda un entorno nuevo que arma restrict-env. Los entornos no
+son #:transparent, entonces equal? los compara por identidad y no por lo que
+tienen adentro. Aunque vinculen lo mismo son distintos. Es la unica prueba que
+mira adentro de la clausura, por eso es la unica que nota el cambio.
+
+La reescribi para que revise lo que promete el bloque: armo un proc con cuerpo
+-(y, z) en un entorno con z y x, y reviso que la clausura si tenga a z (la libre)
+y que no tenga a x (que el cuerpo no usa).
+
+---
+
+let f = proc (x) y in 5 vale 5 aunque y no este vinculada.
+
+Que pasaria si restrict-env buscara cada variable libre con apply-env sin
+preguntar antes con has-binding?? Seria error al crear el procedimiento, porque
+y es libre en el proc y apply-env no la encuentra. En proc-02 el error solo pasa
+si se llama f, y aqui nunca se llama. Recortar el entorno no deberia cambiar el
+resultado de ningun programa, por eso hay que preguntar con has-binding? antes.
+
+La prueba que lo cuida esta en main-tests.rkt: (run "let f = proc (x) y in 5") = (intval 5)

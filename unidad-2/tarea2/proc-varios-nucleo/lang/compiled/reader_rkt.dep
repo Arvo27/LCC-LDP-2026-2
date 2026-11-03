@@ -1,0 +1,1 @@
+("9.2" tarm64osx ("de6d66f258acdba0379330d101a120197a091fdb" . "018e4e5cfb60ab3e8fa0f030f18e43f0474cd4b4") #"/Users/angel/Documents/Prog-Eduardo/git-repo-plantilla/LCC LDP 2026-2/unidad-2/tarea2/proc-varios-nucleo/lang/../parser.rkt" (collects #"racket" #"base.rkt") (collects #"racket" #"port.rkt") (collects #"racket" #"runtime-config.rkt"))

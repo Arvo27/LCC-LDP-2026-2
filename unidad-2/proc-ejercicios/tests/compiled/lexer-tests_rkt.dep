@@ -1,0 +1,1 @@
+("9.2" tarm64osx ("3bac1f96ee19f110eba9a26ea42a6880b95c6aa4" . "a0bb580fc1fbaaf1f163fd6a9ec645ecf2714ad3") #"/Users/angel/Downloads/proc-ejercicios/tests/../lexer.rkt" (collects #"racket" #"main.rkt") (collects #"racket" #"runtime-config.rkt") (collects #"rackunit" #"main.rkt"))
